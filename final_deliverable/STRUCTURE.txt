@@ -1,0 +1,31 @@
+.
+├── FEM_Main.py
+├── PROJECT_INFO.txt
+├── QUICK_START.txt
+├── README.md
+├── STRUCTURE.txt
+├── __pycache__
+│   ├── geometry_utils.cpython-312.pyc
+│   ├── postprocessor.cpython-312.pyc
+│   ├── preprocessor.cpython-312.pyc
+│   └── solver.cpython-312.pyc
+├── data
+│   ├── structure.dat
+│   └── structure.res
+├── geometry_utils.py
+├── output_html
+├── plots
+│   ├── deformed_structure_interactive.html
+│   ├── displacement_distribution.html
+│   ├── geometry_visualization.html
+│   ├── strain_distribution.html
+│   └── stress_distribution.html
+├── postprocessor.py
+├── preprocessor.py
+├── requirements.txt
+├── solver.py
+└── validation_files
+    ├── structure_example.dat
+    └── structure_example.res
+
+6 directories, 23 files
