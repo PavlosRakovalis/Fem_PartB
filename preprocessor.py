@@ -285,46 +285,8 @@ class FEMPreProcessor:
         return element_counter
     
     def _add_diagonal_bracing(self, element_counter, tolerance, max_length):
-        """Add diagonal bracing elements"""
-        max_diagonal_length = min(np.sqrt(2 * self.L**2), max_length)
-        
-        existing = set()
-        for idx in range(len(self.elements)):
-            n1 = int(self.elements.iloc[idx]['Node1'])
-            n2 = int(self.elements.iloc[idx]['Node2'])
-            existing.add(tuple(sorted([n1, n2])))
-        
-        for i in range(len(self.points)):
-            node1 = self.points.iloc[i]
-            node1_num = int(node1['Node Number'])
-            
-            for j in range(i + 1, len(self.points)):
-                node2 = self.points.iloc[j]
-                node2_num = int(node2['Node Number'])
-                
-                connection = tuple(sorted([node1_num, node2_num]))
-                if connection in existing:
-                    continue
-                
-                dx = abs(node2['X'] - node1['X'])
-                dy = abs(node2['Y'] - node1['Y'])
-                dz = abs(node2['Z'] - node1['Z'])
-                
-                distance = np.sqrt(dx**2 + dy**2 + dz**2)
-                
-                if distance > max_diagonal_length + tolerance:
-                    continue
-                
-                # Check coplanarity
-                is_yz_plane = dx < tolerance and dy > tolerance and dz > tolerance
-                is_xz_plane = dx > tolerance and dy < tolerance and dz > tolerance
-                is_xy_plane = dx > tolerance and dy > tolerance and dz < tolerance
-                
-                if is_yz_plane or is_xz_plane or is_xy_plane:
-                    self._add_element(element_counter, node1_num, node2_num)
-                    existing.add(connection)
-                    element_counter += 1
-                    
+        """Add diagonal bracing elements (DISABLED - no diagonal bracing added)"""
+        # Diagonal bracing has been disabled - return without adding any elements
         return element_counter
     
     def _add_node29_connections(self, element_counter):
@@ -353,21 +315,20 @@ class FEMPreProcessor:
     
     def _add_specific_connections(self, element_counter):
         """Add specific connections"""
-        connections = [(9, 28), (16, 22), (23, 1), (2, 17), (1, 10), (2, 3)]
+        # Add user-defined specific connections
+        specific_connections = [
+            (16, 28),  # Connect node 16 to node 28
+            (10, 2),   # Connect node 10 to node 2
+            (23, 2),   # Connect node 23 to node 2
+            (17, 1),   # Connect node 17 to node 1
+            (3, 1),    # Connect node 3 to node 1
+            (22, 9)    # Connect node 22 to node 9
+        ]
         
-        existing = set()
-        for idx in range(len(self.elements)):
-            n1 = int(self.elements.iloc[idx]['Node1'])
-            n2 = int(self.elements.iloc[idx]['Node2'])
-            existing.add(tuple(sorted([n1, n2])))
+        for n1, n2 in specific_connections:
+            self._add_element(element_counter, n1, n2)
+            element_counter += 1
         
-        for n1, n2 in connections:
-            connection = tuple(sorted([n1, n2]))
-            if connection not in existing:
-                self._add_element(element_counter, n1, n2)
-                existing.add(connection)
-                element_counter += 1
-                
         return element_counter
     
     def _add_element(self, elem_num, node1, node2):
