@@ -126,7 +126,21 @@ class FEMPostProcessor:
             
             if current_section == 'DISPLACEMENTS':
                 parts = line.split()
-                if len(parts) == 5:
+                # Bar elements: 5 values (Node Ux Uy Uz |U|)
+                # Beam elements: 9 values (Node Ux Uy Uz Rx Ry Rz |U| |R|)
+                if len(parts) == 9:  # Beam elements
+                    displacements_data.append({
+                        'Node Number': int(parts[0]),
+                        'Ux': float(parts[1]),
+                        'Uy': float(parts[2]),
+                        'Uz': float(parts[3]),
+                        'Rx': float(parts[4]),
+                        'Ry': float(parts[5]),
+                        'Rz': float(parts[6]),
+                        'Magnitude': float(parts[7]),
+                        'Rotation Magnitude': float(parts[8])
+                    })
+                elif len(parts) == 5:  # Bar elements (backward compatible)
                     displacements_data.append({
                         'Node Number': int(parts[0]),
                         'Ux': float(parts[1]),
@@ -136,7 +150,19 @@ class FEMPostProcessor:
                     })
             elif current_section == 'REACTIONS':
                 parts = line.split()
-                if len(parts) == 4:
+                # Bar elements: 4 values (Node Rx Ry Rz)
+                # Beam elements: 7 values (Node Rx Ry Rz Mx My Mz)
+                if len(parts) == 7:  # Beam elements
+                    reactions_data.append({
+                        'Node Number': int(parts[0]),
+                        'Rx': float(parts[1]),
+                        'Ry': float(parts[2]),
+                        'Rz': float(parts[3]),
+                        'Mx': float(parts[4]),
+                        'My': float(parts[5]),
+                        'Mz': float(parts[6])
+                    })
+                elif len(parts) == 4:  # Bar elements (backward compatible)
                     reactions_data.append({
                         'Node Number': int(parts[0]),
                         'Rx': float(parts[1]),
@@ -145,7 +171,21 @@ class FEMPostProcessor:
                     })
             elif current_section == 'ELEMENT_FORCES':
                 parts = line.split()
-                if len(parts) == 4:
+                # Bar elements: 4 values (Elem Axial Stress Strain)
+                # Beam elements: 9 values (Elem Axial Shear_Y Shear_Z Torsion Moment_Y Moment_Z Stress Strain)
+                if len(parts) == 9:  # Beam elements
+                    element_forces_data.append({
+                        'Element Number': int(parts[0]),
+                        'Axial Force': float(parts[1]),
+                        'Shear Y': float(parts[2]),
+                        'Shear Z': float(parts[3]),
+                        'Torsion': float(parts[4]),
+                        'Moment Y': float(parts[5]),
+                        'Moment Z': float(parts[6]),
+                        'Stress': float(parts[7]),
+                        'Strain': float(parts[8])
+                    })
+                elif len(parts) == 4:  # Bar elements (backward compatible)
                     element_forces_data.append({
                         'Element Number': int(parts[0]),
                         'Axial Force': float(parts[1]),
